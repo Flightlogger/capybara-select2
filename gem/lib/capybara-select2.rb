@@ -23,12 +23,14 @@ module Capybara
       elsif select2_container.has_selector?(".select2-choice")
         select2_container.find(".select2-choice").click
       else
-        select2_container.find(".select2-choices").click
+        select2_container.find(".select2-choices .select2-search-field").click
       end
 
       if options.has_key? :search
-        find(:xpath, "//body").find(".select2-search input.select2-search__field").set(value)
-        page.execute_script(%|$("input.select2-search__field:visible").keyup();|)
+        # fix for finding input on select2 < 4
+        search_field = '.select2-search-field input.select2-input, .select2-with-searchbox input.select2-input'
+        find(:xpath, "//body").find(search_field).set(value)
+        page.execute_script(%|$("input.select2-input:visible").keyup();|)
         drop_container = ".select2-results"
       elsif find(:xpath, "//body").has_selector?(".select2-dropdown")
         # select2 version 4.0
